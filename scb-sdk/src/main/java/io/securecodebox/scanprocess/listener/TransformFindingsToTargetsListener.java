@@ -12,6 +12,7 @@ import org.camunda.bpm.engine.variable.value.ObjectValue;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 @Component
@@ -34,12 +35,24 @@ public class TransformFindingsToTargetsListener implements ExecutionListener {
                         DefaultFields.PROCESS_ATTRIBUTE_MAPPING.name()),
                         objectMapper.getTypeFactory().constructCollectionType(List.class, Attribute.class));
 
+                //todo: The location mapping is just a workaround
+                //todo: We should find a better way to map attributes to target field names and vice versa (maybe through reflection and comparing field names)
+                //todo: Currently it's not allowed to have an attribute named "location"
                 for (Target target : newTargets) {
                     for (Attribute attribute : attributeMapping) {
-                        Object value = target.getAttributes().get(attribute.getFrom());
+                        Object value = (attribute.getFrom().equals("location") ? target.getLocation() : target.getAttributes().get(attribute.getFrom()));
                         if (value != null) {
-                            target.getAttributes().remove(attribute.getFrom());
-                            target.getAttributes().put(attribute.getTo(), value);
+                            if(attribute.getTo().equals("location")){
+                                target.setLocation((String)value);
+                            }
+                            else if(attribute.getFrom().equals("location")){
+                                target.getAttributes().remove(attribute.getTo());
+                                target.getAttributes().put(attribute.getTo(), value);
+                            }
+                            else {
+                                target.getAttributes().remove(attribute.getFrom());
+                                target.getAttributes().put(attribute.getTo(), value);
+                            }
                         }
                     }
                 }
