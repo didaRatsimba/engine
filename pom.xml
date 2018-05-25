@@ -69,6 +69,7 @@
         <module>scb-engine</module>
         <module>scb-scanprocesses</module>
         <module>scb-persistenceproviders</module>
+        <module>false-positive-filter</module>
     </modules>
 
     <dependencyManagement>
