@@ -30,11 +30,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class represents findings found by a scanner.
@@ -130,6 +126,9 @@ public class Finding {
         return Collections.unmodifiableMap(attributes);
     }
 
+    @ApiModelProperty(value = "Key value pairs of scanner specific values.", example ="{\"NMAP_PORT\":34, \"NMAP_IP\":\"162.222.1.3\"}", required = false)
+    private Set<String> tags = new HashSet<String>();
+
     @JsonIgnore
     public Object getAttribute(Enum<?> key) {
         return attributes.get(key.name().toLowerCase());
@@ -203,6 +202,14 @@ public class Finding {
         this.location = location;
     }
 
+    public void addTag(String tag) {
+        this.tags.add(tag);
+    }
+
+    public Set<String>getTags(){
+        return this.tags;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -213,12 +220,12 @@ public class Finding {
         return Objects.equals(id, finding.id) && Objects.equals(name, finding.name) && Objects.equals(description,
                 finding.description) && Objects.equals(category, finding.category) && osiLayer == finding.osiLayer
                 && severity == finding.severity && Objects.equals(reference, finding.reference) && Objects.equals(hint,
-                finding.hint) && Objects.equals(attributes, finding.attributes);
+                finding.hint) && Objects.equals(attributes, finding.attributes) && Objects.equals(tags, finding.tags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, category, osiLayer, severity, reference, hint, attributes);
+        return Objects.hash(id, name, description, category, osiLayer, severity, reference, hint, attributes, tags);
     }
 
     @Override

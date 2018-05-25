@@ -33,6 +33,7 @@
 
     <modules>
         <module>empty-false-positive-filter</module>
+        <module>simple-false-positive-filter</module>
     </modules>
 
     <dependencyManagement>
